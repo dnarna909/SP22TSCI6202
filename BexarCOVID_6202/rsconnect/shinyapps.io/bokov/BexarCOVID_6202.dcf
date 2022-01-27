@@ -1,0 +1,14 @@
+name: BexarCOVID_6202
+title: BexarCOVID_6202
+username:
+account: bokov
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5487081
+bundleId: 5495524
+url: https://bokov.shinyapps.io/BexarCOVID_6202/
+when: 1642816165.3318
+lastSyncTime: 1642816165.33181
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: cached_data.tsv
