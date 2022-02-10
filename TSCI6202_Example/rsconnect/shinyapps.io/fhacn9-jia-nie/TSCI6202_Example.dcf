@@ -1,0 +1,14 @@
+name: TSCI6202_Example
+title: TSCI6202_Example
+username:
+account: fhacn9-jia-nie
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5628452
+bundleId: 5566226
+url: https://fhacn9-jia-nie.shinyapps.io/TSCI6202_Example/
+when: 1644525462.37691
+lastSyncTime: 1644525462.37691
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: cached_data.tsv

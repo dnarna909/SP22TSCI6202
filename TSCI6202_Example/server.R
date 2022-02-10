@@ -11,16 +11,40 @@ library(shiny)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
-
-    output$distPlot <- renderPlot({
-
+    print("Start shinyServer")
+    # output$ycol <- renderUI({colourInput('colour_line_1', "Specifiy color") }) # one color
+    # output$ycol <- renderUI({ lapply(input$`Y value`, function(vv) colourInput(paste0(vv, "_colour"),"Specifiy color")) }      ) # add more colors
+    output$ycol <- renderUI({ lapply(seq_along(input$`Y value`), 
+                                     function(xx) { colourInput(paste0(input$`Y value`[xx], "_color"), 
+                                                                "Specifiy color", 
+                                                                hcl.colors(20,palette='Dark 3') [xx] ) } )
+    }) 
+    output$distPlot <- renderPlotly({
+      print("starting render plot")
+      
         # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+       # x    <- faithful[, 2]
+        #bins <- seq(min(x), max(x), length.out = input$bins + 1)
 
         # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
+        # browser()
+        # geom.list <- lapply(input$`Y value`, function(xx) geom_line(aes_string( y = xx), linetype="dotted", color = input$colour_line_1,
+                                                                    # color = input$colour_line, 
+        #                                                             size=1)) # one color
+        # geom.list <- lapply(input$`Y value`, function(xx) { colourInput(paste0(xx, "_color"), "Specifiy color" ) } )
+        geom.list <- lapply(input$`Y value`, function(xx) geom_line(aes_string( y = xx), 
+                                                                    # linetype="dotted", 
+                                                                    # color = input$colour_line_1,
+                                                                  color = input[[paste0(xx, "_color")]], 
+                                                                   size=1)) # more colors
+        plt <- ggplot(dat1, aes_string( x= "reporting_date") ) + 
+          geom.list + 
+          ylab("counts ")
+        plt
+        ggplotly(plt) %>% layout(dragmode = "select")
 
     })
 
 })
+
+

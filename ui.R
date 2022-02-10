@@ -10,7 +10,6 @@
 library(shiny)
 library(colourpicker);
 library(shinyBS);
-library(plotly)
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
@@ -25,20 +24,14 @@ shinyUI(fluidPage(
                         "Number of bins:",
                         min = 1,
                         max = 50,
-                        value = 30), # could be delete
-            colourInput('colour_line', "Specifiy color", value='red'), # could be delete
-            selectInput("Y value", "Specifiy Variable", names(dat1)[-(1:3)], 
-                        multiple = TRUE,
-                        selectize = TRUE,
-                        #selected = colnames[5]
-                        ), # ID,CAPTION, CHOICES
-            uiOutput("ycol")
+                        value = 30),
+            colourInput('colour_line', "Specifiy color", value='red'),
+            selectInput("Y value", "Specifiy Variable", names(dat1)[-(1:3)]) # ID,CAPTION, CHOICES
         ),
 
         # Show a plot of the generated distribution
         mainPanel(
-            # plotOutput("distPlot")
-            plotlyOutput("distPlot")
+            plotOutput("distPlot")
         )
     )
 ))
