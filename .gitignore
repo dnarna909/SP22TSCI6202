@@ -47,6 +47,7 @@ local.config.R
 ./scripts/.tidbits_installed
 *bak
 *_files
+rsconnect
 # We don't commit data unless we really mean it.
 *.csv
 *.tsv
