@@ -2,6 +2,8 @@ library(jsonlite)
 library(dplyr)
 library(rio)
 library(ggplot2)
+library(gt);
+library(gtExtras)
 #install_formats()
 
 if(!file.exists("cached_data.tsv") || as.Date(file.info('cached_data.tsv')$ctime) < Sys.Date() ) {
