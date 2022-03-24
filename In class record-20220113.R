@@ -161,3 +161,62 @@ dt
 
 demo("dimple")
 
+# 2022-03-24 ------------------------------------
+# install gt, gtExtras packages
+# note: ctrl + shift + c : add # to all lines,
+# create nice table by gt packages
+
+gt(dat1) %>% cols_hide(c("globalid", "objectid")) # hide the columns, "" not affect
+
+cols <- c("change_in_7_day_moving_avg", "count_7_day_moving_avg")
+gt_preview(dat1) %>% cols_hide(c("globalid", "objectid")) %>% fmt_number(all_of(cols), decimals = 1) # change decimals
+
+gt_preview(dat1) %>% cols_hide(c("globalid", "objectid")) %>% fmt_number(all_of(cols), decimals = 1) %>%
+  fmt_missing(columns = everything(), missing_text = "")# show/change missing values display, NA,
+
+gt_preview(dat1) %>% cols_hide(c("globalid", "objectid")) %>% fmt_number(all_of(cols), decimals = 1) %>%
+  fmt_missing(columns = everything(), missing_text = "") %>%
+  data_color(columns = c(total_case_daily_change), colors = scales::col_numeric(palette = c('green','red'), domain = NULL))# formatting colors
+
+gt_preview(dat1) %>% cols_hide(c("globalid", "objectid")) %>% fmt_number(all_of(cols), decimals = 1) %>%
+  fmt_missing(columns = everything(), missing_text = "") %>%
+  data_color(columns = c(total_case_daily_change), colors = scales::col_numeric(palette = c('green','red'), domain = NULL)) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "lightcyan"),
+      cell_text(weight = "bold")),
+    locations = cells_body(
+      columns = vars(change_in_7_day_moving_avg),
+      rows = change_in_7_day_moving_avg >0 )
+    ) # formatting colors based on condition
+
+gt_preview(dat1) %>% cols_hide(c("globalid", "objectid")) %>% fmt_number(all_of(cols), decimals = 1) %>%
+  fmt_missing(columns = everything(), missing_text = "") %>%
+  data_color(columns = c(total_case_daily_change), colors = scales::col_numeric(palette = c('green','red'), domain = NULL)) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "lightcyan"),
+      cell_text(weight = "bold")),
+    locations = cells_body(
+      columns = c(change_in_7_day_moving_avg),
+      rows = change_in_7_day_moving_avg >0 )
+  ) %>%
+  cols_label(change_in_7_day_moving_avg="change_in_7_day_moving_avg1",
+             total_case_daily_change="total_case_daily_change2",
+             deaths_daily_change = html("Death&nbsp;per&nbsp;Day")) # change column names, for blanket: &nbsp;
+gt_sparkline()
+
+library(tidyr)
+pivot_longer(dat1, any_of(names(dat1)[-(1:3) ])) %>% arrange(reporting_date) %>%
+  group_by(name) %>%
+  summarize(across(.fns = ~list(.x))) %>%
+  View() # summarize data based on columns
+
+
+
+
+
+
+
+
+

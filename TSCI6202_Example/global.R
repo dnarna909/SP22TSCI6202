@@ -4,6 +4,7 @@ library(rio)
 library(ggplot2)
 library(gt);
 library(gtExtras)
+library(tidyr)
 #install_formats()
 
 if(!file.exists("cached_data.tsv") || as.Date(file.info('cached_data.tsv')$ctime) < Sys.Date() ) {
@@ -18,3 +19,18 @@ if(!file.exists("cached_data.tsv") || as.Date(file.info('cached_data.tsv')$ctime
 
 
 # Listening on http://127.0.0.1:5088 # your own computer route, copy IP address in browser, you will find the figure in browser.
+
+Table1 <- gt(dat1) %>% cols_hide(c("globalid", "objectid")) %>% fmt_number(all_of(cols), decimals = 1) %>%
+  fmt_missing(columns = everything(), missing_text = "") %>%
+  data_color(columns = c(total_case_daily_change), colors = scales::col_numeric(palette = c('green','red'), domain = NULL)) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "lightcyan"),
+      cell_text(weight = "bold")),
+    locations = cells_body(
+      columns = c(change_in_7_day_moving_avg),
+      rows = change_in_7_day_moving_avg >0 )
+  ) %>%
+  cols_label(change_in_7_day_moving_avg="change_in_7_day_moving_avg1",
+             total_case_daily_change="total_case_daily_change2",
+             deaths_daily_change = html("Death&nbsp;per&nbsp;Day"))

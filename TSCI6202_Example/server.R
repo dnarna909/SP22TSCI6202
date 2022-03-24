@@ -19,23 +19,29 @@ shinyServer(function(input, output) {
                                                                 "Specifiy color",
                                                                 hcl.colors(20,palette='Dark 3') [xx] ) } )
     })
-    output$dTable_test <- renderChart({
-      print("starting render Chart")
-      dt <- dTable(
-        dat1 #%>% select(-c("V1", "reporting_date", "globalid")) %>% mutate(reporting_date = format(reporting_date))
-        ,
-        sPaginationType= "full_numbers"
-      )
-      dt
-      d1 <- dPlot( x = "reporting_date",
-                   y = "total_case_cumulative",
-                   data = dat1,
-                   type = "line",
-                   height = 400,
-                   width = 700,
-                   bounds = list(x=50,y=20,width=650,height=300)
-      )
-    })
+    # gt_plot ----
+    output$gTable_test <- render_gt(
+      Table1
+    )
+
+    # distPlot ----
+    # output$dTable_test <- renderChart({
+    #   print("starting render Chart")
+    #   dt <- dTable(
+    #     dat1 #%>% select(-c("V1", "reporting_date", "globalid")) %>% mutate(reporting_date = format(reporting_date))
+    #     ,
+    #     sPaginationType= "full_numbers"
+    #   )
+    #   dt
+    #   d1 <- dPlot( x = "reporting_date",
+    #                y = "total_case_cumulative",
+    #                data = dat1,
+    #                type = "line",
+    #                height = 400,
+    #                width = 700,
+    #                bounds = list(x=50,y=20,width=650,height=300)
+    #   )
+    # })
     output$distPlot <- renderPlotly({
       print("starting render plot")
 

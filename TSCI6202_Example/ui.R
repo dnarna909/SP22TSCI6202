@@ -45,7 +45,7 @@ shinyUI(fluidPage(
             )
         )
         ),
-        tabPanel(title = "TestPanel", chartOutput("dTable_test","dPlot")),
+        tabPanel(title = "TestPanel", gt_output("gTable_test")),
         tabPanel(title = "TestPanel3")
     )
 ))
