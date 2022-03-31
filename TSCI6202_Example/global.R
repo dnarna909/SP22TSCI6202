@@ -19,7 +19,7 @@ if(!file.exists("cached_data.tsv") || as.Date(file.info('cached_data.tsv')$ctime
 
 
 # Listening on http://127.0.0.1:5088 # your own computer route, copy IP address in browser, you will find the figure in browser.
-
+cols <- c("change_in_7_day_moving_avg", "count_7_day_moving_avg")
 Table1 <- gt(dat1) %>% cols_hide(c("globalid", "objectid")) %>% fmt_number(all_of(cols), decimals = 1) %>%
   fmt_missing(columns = everything(), missing_text = "") %>%
   data_color(columns = c(total_case_daily_change), colors = scales::col_numeric(palette = c('green','red'), domain = NULL)) %>%
