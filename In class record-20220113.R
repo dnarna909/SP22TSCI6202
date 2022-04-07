@@ -213,6 +213,89 @@ pivot_longer(dat1, any_of(names(dat1)[-(1:3) ])) %>% arrange(reporting_date) %>%
   View() # summarize data based on columns
 
 
+# 03/31/2022 ---------------------------------------------------------------------------------------------------
+gt_sparkline()
+
+dat2_pvt <- dat1 %>%
+  # select(1:7) %>%
+  arrange(reporting_date) %>%
+  pivot_longer(any_of(colnames(dat1)[-(1:3)])) %>%
+  group_by(name) %>%
+  summarize(across(.fns = ~list(na.omit(.x)))) %>%
+  gt() %>%
+  cols_hide(c("globalid", "objectid", "reporting_date")) %>%
+  gt_sparkline(value)
+dat2_pvt
+
+dat1 %>%
+  # select(1:7) %>%
+  arrange(reporting_date) %>%
+  pivot_longer(any_of(colnames(dat1)[-(1:3)])) %>%
+  group_by(name) %>%
+  summarize(across(.fns = ~list(na.omit(.x)))) %>%
+  gt() %>%
+  cols_hide(c("globalid", "objectid", "reporting_date")) %>%
+  gt_sparkline(value, same_limit = FALSE) # A logical indicating that the plots will use the same axis range (TRUE) or have individual axis ranges (FALSE).
+
+dat1 %>%
+  # select(1:7) %>%
+  arrange(reporting_date) %>%
+  pivot_longer(any_of(colnames(dat1)[-(1:3)])) %>%
+  group_by(name) %>%
+  summarize(across(.fns = ~list(na.omit(.x)))) %>%
+  mutate(Hist = value, Dense = value) %>%
+  rename(sparkline = value) %>%
+  gt() %>%
+  cols_hide(c("globalid", "objectid", "reporting_date")) %>%
+  gt_sparkline(sparkline, same_limit = FALSE) %>%
+  gt_sparkline(Hist, same_limit = FALSE, type = "histogram") %>%
+  gt_sparkline(Dense, same_limit = FALSE, type = "density")
+
+# cols_move function
+dat1 %>%
+  # select(1:7) %>%
+  arrange(reporting_date) %>%
+  pivot_longer(any_of(colnames(dat1)[-(1:3)])) %>%
+  group_by(name) %>%
+  summarize(Median = median(value, na.rm = TRUE),
+            SD = sd(value, na.rm = TRUE),
+            across(.fns = ~list(na.omit(.x)))
+  ) %>%
+  mutate(Hist = value, Dense = value) %>%
+  rename(sparkline = value) %>%
+  gt() %>%
+  cols_hide(c("globalid", "objectid", "reporting_date")) %>%
+  gt_sparkline(sparkline, same_limit = FALSE) %>%
+  gt_sparkline(Hist, same_limit = FALSE, type = "histogram") %>%
+  gt_sparkline(Dense, same_limit = FALSE, type = "density") %>%
+  cols_move("sparkline", after = "Median") %>%
+  # cols_move_to_start("sparkline")
+
+
+  # cols_label function
+  dat1 %>%
+  arrange(reporting_date) %>%
+  pivot_longer(any_of(colnames(dat1)[-(1:3)])) %>%
+  group_by(name) %>%
+  summarize(Median = median(value, na.rm = TRUE),
+            SD = sd(value, na.rm = TRUE),
+            across(.fns = ~list(na.omit(.x)))  ) %>%
+  mutate(Hist = value, Dense = value) %>%
+  rename(sparkline = value) %>%
+  gt() %>%
+  cols_hide(c("globalid", "objectid", "reporting_date")) %>%
+  cols_move("sparkline", after = "Median") %>%
+  cols_label(sparkline = md("**Sparkline**"),
+             Hist = html("<span,style='color:red'>Histogram</span>") )  %>%
+  gt_sparkline(sparkline, same_limit = FALSE) %>%
+  gt_sparkline(Hist, same_limit = FALSE, type = "histogram") %>%
+  gt_sparkline(Dense, same_limit = FALSE, type = "density")
+
+
+# cols_label(.list = list(Median = "MEDIAN") )
+
+
+
 
 
 

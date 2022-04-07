@@ -33,4 +33,5 @@ Table1 <- gt(dat1) %>% cols_hide(c("globalid", "objectid")) %>% fmt_number(all_o
   ) %>%
   cols_label(change_in_7_day_moving_avg="change_in_7_day_moving_avg1",
              total_case_daily_change="total_case_daily_change2",
-             deaths_daily_change = html("Death&nbsp;per&nbsp;Day"))
+             deaths_daily_change = html("Death&nbsp;per&nbsp;Day")) # the `&nbsp;` will prevent HTML from warpping text which it will assume is safe to do with spaces
+
