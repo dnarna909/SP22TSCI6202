@@ -23,7 +23,7 @@ hist(x, breaks= bins, col = 'darkgray', border= 'white')
 
 
 
-# 2022-01-20-----------------------------------------------------------------------------------------------------------------------------
+  # 2022-01-20-----------------------------------------------------------------------------------------------------------------------------
 ## prepare data
 library(jsonlite)
 library(dplyr)
@@ -32,11 +32,11 @@ library(ggplot2)
 
 if(!file.exists("cached_data.tsv")) {
 
-dat0 <- fromJSON(txt = 'https://services.arcgis.com/g1fRTDLeMgspWrYp/arcgis/rest/services/SAMHD_DailySurveillance_Data_Public/FeatureServer/0/query?where=1%3D1&outFields=*&returnGeometry=false&outSR=4326&f=json')
+  dat0 <- fromJSON(txt = 'https://services.arcgis.com/g1fRTDLeMgspWrYp/arcgis/rest/services/SAMHD_DailySurveillance_Data_Public/FeatureServer/0/query?where=1%3D1&outFields=*&returnGeometry=false&outSR=4326&f=json')
 
-dat1 <- dat0[["features"]][["attributes"]] %>% subset(!is.na(total_case_cumulative)) %>%
-  mutate(reporting_date = as.POSIXct(reporting_date/1000, origin = "1970-01-01"))
-export(dat1, "cached_data.tsv")
+  dat1 <- dat0[["features"]][["attributes"]] %>% subset(!is.na(total_case_cumulative)) %>%
+    mutate(reporting_date = as.POSIXct(reporting_date/1000, origin = "1970-01-01"))
+  export(dat1, "cached_data.tsv")
 } else {dat1 <- import("cached_data.tsv")}
 
 head(dat1$reporting_date/1000) %>% as.POSIXct(origin = "1970-01-01")
@@ -80,7 +80,7 @@ input <- list(colour_line = c("red"),
               `Y value` = c("strac_covid_positive_in_hospita", "total_case_daily_change",
                             "total_case_cumulative"))
 geom.list <- lapply(input$`Y value`, function(xx) geom_line(aes_string( y = xx),
-                                               linetype="dotted", color = input$colour_line, size=1))
+                                                            linetype="dotted", color = input$colour_line, size=1))
 
 ggplot(dat1, aes_string( x= "reporting_date") ) +
   geom.list +
@@ -133,30 +133,30 @@ dat1 <- dat1 %>% mutate(reporting_date_new = format(reporting_date))
 
 
 dt <- dTable(
-     dat1 %>% select(-c("V1", "reporting_date", "globalid")) %>% relocate("reporting_date_new"),
-     sPaginationType= "full_numbers"
-   )
-dt
-
-dt <- dTable(
-     dat1,
-     bScrollInfinite = T,
-     bScrollCollapse = T,
-     sScrollY = "200px",
-     width = "500px"
-   )
+  dat1 %>% select(-c("V1", "reporting_date", "globalid")) %>% relocate("reporting_date_new"),
+  sPaginationType= "full_numbers"
+)
 dt
 
 dt <- dTable(
   dat1,
-     sScrollY = "200px",
-     bScrollCollapse = T,
-     bPaginate = F,
-     bJQueryUI = T,
-     aoColumnDefs = list(
-         sWidth = "5%", aTargets =  list(-1)
-       )
-   )
+  bScrollInfinite = T,
+  bScrollCollapse = T,
+  sScrollY = "200px",
+  width = "500px"
+)
+dt
+
+dt <- dTable(
+  dat1,
+  sScrollY = "200px",
+  bScrollCollapse = T,
+  bPaginate = F,
+  bJQueryUI = T,
+  aoColumnDefs = list(
+    sWidth = "5%", aTargets =  list(-1)
+  )
+)
 dt
 
 demo("dimple")
@@ -188,7 +188,7 @@ gt_preview(dat1) %>% cols_hide(c("globalid", "objectid")) %>% fmt_number(all_of(
     locations = cells_body(
       columns = vars(change_in_7_day_moving_avg),
       rows = change_in_7_day_moving_avg >0 )
-    ) # formatting colors based on condition
+  ) # formatting colors based on condition
 
 gt_preview(dat1) %>% cols_hide(c("globalid", "objectid")) %>% fmt_number(all_of(cols), decimals = 1) %>%
   fmt_missing(columns = everything(), missing_text = "") %>%
@@ -295,11 +295,63 @@ dat1 %>%
 # cols_label(.list = list(Median = "MEDIAN") )
 
 
+# 2022-04-07 -----------------------------------------
+dat2_pvt$name
+input <- list(gt_var = c("deaths_cumulative", "deaths_daily_change", "deaths_under_investigation"),
+              gt_col = c("sparkline", "SD", "Hist")) # c("spark", "stdv", "hist"))
+subset(dat2_pvt, name %in% input$gt_var)
 
 
 
+setdiff(1:10,5:20)
+intersect(1:10,5:20)
+union(1:10,5:20)
 
+# 2022-04-21 -----------------------------------------
 
+foo <- reactiveValuesToList(input)
 
+dat2_pvt <- dat1 %>%
+  arrange(reporting_date) %>%
+  pivot_longer(any_of(colnames(dat1)[-(1:3)])) %>%
+  group_by(name) %>%
+  summarize(Median = median(value, na.rm = TRUE),
+            SD = sd(value, na.rm = TRUE),
+            across(.fns = ~list(na.omit(.x)))  ) %>%
+  mutate(Hist = value, Dense = value) %>%
+  rename(sparkline = value)
 
+dat2_pvt  %>%
+  gt() %>%
+  #cols_hide(hide_dat2) %>%
+  {xx <-. ;
+  # browser();
+  # cols_move("sparkline", after = "Median")
+  if(all( c("Median") %in% input$gt_col )){ cols_move(xx, "sparkline", after = "Median")} else { xx }
+  } %>% # {} pu
+  {xx <-. ;
+  if(all( c("sparkline") %in% input$gt_col )){ cols_label(sparkline = md("**Sparkline**"),
+                                                          Hist = html("<span,style='color:red'>Histogram</span>") )} else { xx }
+  }  %>%
+  cols_label(sparkline = md("**Sparkline**"),  Hist = html("<span,style='color:red'>Histogram</span>") )  %>%
+  gt_sparkline(sparkline, same_limit = FALSE) %>%
+  gt_sparkline(Hist, same_limit = FALSE, type = "histogram") %>%
+  gt_sparkline(Dense, same_limit = FALSE, type = "density")
+
+subset(dat2_pvt, name %in% input$gt_var)[, input$gt_col]  %>%
+  gt() %>%
+  #cols_hide(hide_dat2) %>%
+  {xx <-. ;
+  # browser();
+  # cols_move("sparkline", after = "Median")
+  if(all( c("Median") %in% input$gt_col )){ cols_move(xx, "sparkline", after = "Median")} else { xx }
+  } %>% # {} pu
+  {xx <-. ;
+  if(all( c("sparkline") %in% input$gt_col )){ cols_label(sparkline = md("**Sparkline**"),
+                                                          Hist = html("<span,style='color:red'>Histogram</span>") )} else { xx }
+  }  %>%
+  cols_label(sparkline = md("**Sparkline**"),  Hist = html("<span,style='color:red'>Histogram</span>") )  %>%
+  gt_sparkline(sparkline, same_limit = FALSE) %>%
+  gt_sparkline(Hist, same_limit = FALSE, type = "histogram") %>%
+  gt_sparkline(Dense, same_limit = FALSE, type = "density")
 

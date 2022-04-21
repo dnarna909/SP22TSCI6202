@@ -20,9 +20,13 @@ if(!file.exists("cached_data.tsv") || as.Date(file.info('cached_data.tsv')$ctime
 
 # Listening on http://127.0.0.1:5088 # your own computer route, copy IP address in browser, you will find the figure in browser.
 cols <- c("change_in_7_day_moving_avg", "count_7_day_moving_avg")
-Table1 <- gt(dat1) %>% cols_hide(c("globalid", "objectid")) %>% fmt_number(all_of(cols), decimals = 1) %>%
+Table1 <- gt(dat1) %>%
+  cols_hide(c("globalid", "objectid")) %>%
+  fmt_number(all_of(cols), decimals = 1) %>%
   fmt_missing(columns = everything(), missing_text = "") %>%
-  data_color(columns = c(total_case_daily_change), colors = scales::col_numeric(palette = c('green','red'), domain = NULL)) %>%
+  data_color(columns = c(total_case_daily_change),
+             colors = scales::col_numeric(palette = c('green','red'),
+                                          domain = NULL)) %>%
   tab_style(
     style = list(
       cell_fill(color = "lightcyan"),
@@ -35,3 +39,16 @@ Table1 <- gt(dat1) %>% cols_hide(c("globalid", "objectid")) %>% fmt_number(all_o
              total_case_daily_change="total_case_daily_change2",
              deaths_daily_change = html("Death&nbsp;per&nbsp;Day")) # the `&nbsp;` will prevent HTML from warpping text which it will assume is safe to do with spaces
 
+
+dat2_pvt <- dat1 %>%
+  arrange(reporting_date) %>%
+  pivot_longer(any_of(colnames(dat1)[-(1:3)])) %>%
+  group_by(name) %>%
+  summarize(Median = median(value, na.rm = TRUE),
+            SD = sd(value, na.rm = TRUE),
+            across(.fns = ~list(na.omit(.x)))  ) %>%
+  mutate(Hist = value, Dense = value) %>%
+  rename(sparkline = value)
+
+hide <- c("globalid", "objectid")
+hide_spark <- c(hide, "reporting_date")
