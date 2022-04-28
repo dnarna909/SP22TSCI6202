@@ -321,37 +321,13 @@ dat2_pvt <- dat1 %>%
   mutate(Hist = value, Dense = value) %>%
   rename(sparkline = value)
 
-dat2_pvt  %>%
-  gt() %>%
-  #cols_hide(hide_dat2) %>%
-  {xx <-. ;
-  # browser();
-  # cols_move("sparkline", after = "Median")
-  if(all( c("Median") %in% input$gt_col )){ cols_move(xx, "sparkline", after = "Median")} else { xx }
-  } %>% # {} pu
-  {xx <-. ;
-  if(all( c("sparkline") %in% input$gt_col )){ cols_label(sparkline = md("**Sparkline**"),
-                                                          Hist = html("<span,style='color:red'>Histogram</span>") )} else { xx }
-  }  %>%
-  cols_label(sparkline = md("**Sparkline**"),  Hist = html("<span,style='color:red'>Histogram</span>") )  %>%
-  gt_sparkline(sparkline, same_limit = FALSE) %>%
-  gt_sparkline(Hist, same_limit = FALSE, type = "histogram") %>%
-  gt_sparkline(Dense, same_limit = FALSE, type = "density")
+observe({if(input$debug>0) browser()})
 
-subset(dat2_pvt, name %in% input$gt_var)[, input$gt_col]  %>%
-  gt() %>%
-  #cols_hide(hide_dat2) %>%
-  {xx <-. ;
-  # browser();
-  # cols_move("sparkline", after = "Median")
-  if(all( c("Median") %in% input$gt_col )){ cols_move(xx, "sparkline", after = "Median")} else { xx }
-  } %>% # {} pu
-  {xx <-. ;
-  if(all( c("sparkline") %in% input$gt_col )){ cols_label(sparkline = md("**Sparkline**"),
-                                                          Hist = html("<span,style='color:red'>Histogram</span>") )} else { xx }
-  }  %>%
-  cols_label(sparkline = md("**Sparkline**"),  Hist = html("<span,style='color:red'>Histogram</span>") )  %>%
-  gt_sparkline(sparkline, same_limit = FALSE) %>%
-  gt_sparkline(Hist, same_limit = FALSE, type = "histogram") %>%
-  gt_sparkline(Dense, same_limit = FALSE, type = "density")
+if(need(MYDATA,'Help!!!')) {} #
+
+
+
+
+
+
 
