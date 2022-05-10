@@ -32,8 +32,8 @@ shinyUI(fluidPage(
                   colourInput('colour_line', "Specifiy color", value='red'), # could be delete
                   selectInput("Y value", "Specifiy Variable", names(dat1)[-(1:3)],
                               multiple = TRUE,
-                              selectize = TRUE,
-                              #selected = colnames[5]
+                              selectize = TRUE
+                              #, selected = colnames[5]
                   ), # ID,CAPTION, CHOICES
                   uiOutput("ycol")
                 ),
@@ -62,10 +62,15 @@ shinyUI(fluidPage(
                mainPanel(fluidRow(column(10,
                                          gt_output("distPlot_test"))))
              )
-    )
+    ),
+
+    tabPanel(title = "sc_data",
+             plotlyOutput("scPLOT"))
+
   )
 )
 )
+
 
 
 

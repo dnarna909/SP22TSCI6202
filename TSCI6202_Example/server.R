@@ -108,7 +108,12 @@ shinyServer(function(input, output) {
     out
   })
 
-
+  # sc
+  output$scPLOT <- renderPlotly({
+    print("starting render plot: scPlot")
+    plot <- FeaturePlot(sc_data, features = "MS4A1")
+    HoverLocator(plot = plot, information = FetchData(sc_data, vars = c("ident", "PC_1", "nFeature_RNA")))
+  })
 
 })
 

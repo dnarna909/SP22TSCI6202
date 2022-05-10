@@ -5,6 +5,8 @@ library(ggplot2)
 library(gt);
 library(gtExtras)
 library(tidyr)
+library(Seurat)
+library(patchwork)
 #install_formats()
 
 if(!file.exists("cached_data.tsv") || as.Date(file.info('cached_data.tsv')$ctime) < Sys.Date() ) {
@@ -52,3 +54,13 @@ dat2_pvt <- dat1 %>%
 
 hide <- c("globalid", "objectid")
 hide_spark <- c(hide, "reporting_date")
+
+
+# import scDATA
+sc_data <- if(file.exists('REALDATA.rdata')) {
+  import('REALDATA.rdata')} else {
+    pbmc_small}
+
+plot <- FeaturePlot(sc_data, features = "MS4A1")
+
+
