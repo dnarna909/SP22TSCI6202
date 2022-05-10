@@ -12,6 +12,8 @@ library(shiny)
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
   print("Start shinyServer")
+
+  # COVID_19_Panel, renderUI -----------------------------------------------------------------------------------------
   # output$ycol <- renderUI({colourInput('colour_line_1', "Specifiy color") }) # one color
   # output$ycol <- renderUI({ lapply(input$`Y value`, function(vv) colourInput(paste0(vv, "_colour"),"Specifiy color")) }      ) # add more colors
   output$ycol <- renderUI({ lapply(seq_along(input$`Y value`),
@@ -19,27 +21,8 @@ shinyServer(function(input, output) {
                                                               "Specifiy color",
                                                               hcl.colors(20,palette='Dark 3') [xx] ) } )
   })
-  # gt_plot ----
-  output$gTable_test <- render_gt({
-    print("starting render plot:gTable_test")
-    truncated_cols <- c("change_in_7_day_moving_avg", "count_7_day_moving_avg")
-    gt_preview(dat1) %>%
-      cols_hide(hide) %>%
-      fmt_number(all_of(truncated_cols), decimals = 1) %>%
-      fmt_missing(columns = everything(), missing_text = "Eureka") %>%
-      data_color(columns = c("total_case_daily_change"),
-                 colors = scales::col_numeric(palette = c("green", "red"),
-                                              domain = NULL)) %>%
-      tab_style(style = list(
-        cell_fill(color = "yellow"),
-        cell_text(weight = "bold")),
-        locations = cells_body(columns = c(change_in_7_day_moving_avg),
-                               rows = change_in_7_day_moving_avg >0)) %>%
-      cols_label(deaths_under_investigation = html("Death&nbsp;per&nbsp;Day"))
 
-    })
-
-  # distPlot ----
+  # COVID_19_Panel, Plotly ------------------------------------------------------------------------------------------------
   # output$dTable_test <- renderChart({
   #   print("starting render Chart")
   #   dt <- dTable(
@@ -83,7 +66,29 @@ shinyServer(function(input, output) {
     ggplotly(plt) %>% layout(dragmode = "select")
   })
 
-  # distplot test ----
+
+  # TestPanel, gt_plot ---------------------------------------------------------------------------------------------
+  output$gTable_test <- render_gt({
+    print("starting render plot:gTable_test")
+    truncated_cols <- c("change_in_7_day_moving_avg", "count_7_day_moving_avg")
+    gt_preview(dat1) %>%
+      cols_hide(hide) %>%
+      fmt_number(all_of(truncated_cols), decimals = 1) %>%
+      fmt_missing(columns = everything(), missing_text = "Eureka") %>%
+      data_color(columns = c("total_case_daily_change"),
+                 colors = scales::col_numeric(palette = c("green", "red"),
+                                              domain = NULL)) %>%
+      tab_style(style = list(
+        cell_fill(color = "yellow"),
+        cell_text(weight = "bold")),
+        locations = cells_body(columns = c(change_in_7_day_moving_avg),
+                               rows = change_in_7_day_moving_avg >0)) %>%
+      cols_label(deaths_under_investigation = html("Death&nbsp;per&nbsp;Day"))
+
+  })
+
+
+  # TestPanel3, gt_plot ------------------------------------------------------------------------------------------------
   # quick copy for tab 3 to test, doesn't plot yet
   output$distPlot_test <- render_gt({
     print("starting render plot: distPlot_test")
@@ -108,11 +113,32 @@ shinyServer(function(input, output) {
     out
   })
 
-  # sc
+  # scPLOT, Plotly ---------------------------------------------------------------------------------------
   output$scPLOT <- renderPlotly({
     print("starting render plot: scPlot")
-    plot <- FeaturePlot(sc_data, features = "MS4A1")
-    HoverLocator(plot = plot, information = FetchData(sc_data, vars = c("ident", "PC_1", "nFeature_RNA")))
+    plot1 <- DimPlot(sc_data)
+    plot1
+
+  })
+
+  output$scPLOT2 <- renderPlotly({
+    print("starting render plot: scPlot")
+    plot2 <- VlnPlot(sc_data, features = input$meta.data, split.by = input$meta.data2)
+    plot2
+
+  })
+
+  output$scPLOT3 <- renderPlotly({
+    print("starting render plot: scPlot")
+    plot3 <- DotPlot(sc_data, features = input$features) + RotatedAxis()
+    plot3
+
+  })
+
+  output$scPLOT_interactive <- renderPlotly({
+    print("starting render plot: scPLOT_interactive")
+    plot.i <- FeaturePlot(sc_data, features = input$Gene_name)
+    HoverLocator(plot = plot.i, information = FetchData(sc_data, vars = c("ident", "PC_1", "nFeature_RNA")))
   })
 
 })

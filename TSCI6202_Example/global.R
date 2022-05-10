@@ -7,6 +7,7 @@ library(gtExtras)
 library(tidyr)
 library(Seurat)
 library(patchwork)
+library(ShinyCell)
 #install_formats()
 
 if(!file.exists("cached_data.tsv") || as.Date(file.info('cached_data.tsv')$ctime) < Sys.Date() ) {
@@ -61,6 +62,6 @@ sc_data <- if(file.exists('REALDATA.rdata')) {
   import('REALDATA.rdata')} else {
     pbmc_small}
 
-plot <- FeaturePlot(sc_data, features = "MS4A1")
+# plot <- FeaturePlot(sc_data, features = "MS4A1")
 
 
